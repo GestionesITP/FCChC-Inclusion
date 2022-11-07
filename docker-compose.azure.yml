@@ -1,0 +1,11 @@
+version: "3"
+
+services:
+  inclusion-api-test:
+    image: cchcdev.azurecr.io/inclusion-service:latest
+    domainname: inclusion-test
+    container_name: inclusion-test
+    command: bash -c "cd / && alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port 5196"
+    ports:
+      - 5196:5196
+   
