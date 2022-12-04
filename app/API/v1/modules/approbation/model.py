@@ -9,7 +9,12 @@ from ...helpers.model import Attachment
 class Approbation(Base, AuthorMixin, TimestampMixin):
     __tablename__ = "approbation"
     id = Column(Integer, primary_key=True, unique=True, autoincrement=True)
-    date = Column(DateTime(timezone=True),
+    date = Column(DateTime(timezone=True), nullable=False)
+    analyst_id = Column(Integer, nullable=False)
+    analyst_names = Column(String(120), nullable=False)
+    comments = Column(String(800), nullable=False)
+    attachments = relationship(
+        "ApprobationAttachment", back_populates="approbation", lazy="joined")
 
 
 class ApprobationAttachment(Base, AuthorMixin, TimestampMixin):
@@ -17,8 +22,7 @@ class ApprobationAttachment(Base, AuthorMixin, TimestampMixin):
     id = Column(Integer, primary_key=True, unique=True, autoincrement=True)
     date = Column(DateTime(timezone=True), nullable=False)
     attachment_name = Column(String(120))
-    attachment_id = Column(Integer, ForeignKey(
-        "attachment.id"), nullable=False)
+    attachment_id = Column(Integer,
     approbation_id = Column(Integer, ForeignKey(
         "approbation.id"), nullable=False)
     approbation = relationship(
