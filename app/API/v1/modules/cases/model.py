@@ -19,7 +19,31 @@ class InclusionCase(Base, AuthorMixin, TimestampMixin):
     construction_id = Column(Integer, nullable=False)
     construction_name = Column(String(120), nullable=False)
     billing_business_id = Column(Integer, nullable=False)
-
+    billing_business_name = Column(String(120), nullable=False)
+    interlocutor_id = Column(Integer, nullable=False)
+    authorizing_user = Column(String(250), nullable=False)
+    authorizing_charge_id = Column(Integer, nullable=False)
+    status = Column(String(25), nullable=False)
+    delegation = Column(String(120), nullable=False)
+    boss_id = Column(Integer, nullable=False)
+    boss_names = Column(String(120), nullable=False)
+    assistance_id = Column(Integer, nullable=False, server_default="1")
+    assistance_names = Column(
+        String(120), nullable=False, server_default="ADMIN MYERS")
+    is_active = Column(Boolean, nullable=False, server_default="1")
+    charge_method_id = Column(Integer, ForeignKey(
+        "charge_method.id"), nullable=False)
+    attachment_id = Column(Integer, ForeignKey(
+        "attachment.id"))
+    approbation_id = Column(Integer, ForeignKey("approbation.id"))
+    rejection_id = Column(Integer, ForeignKey("inclusion_case_rejection.id"))
+    close_id = Column(Integer, ForeignKey("inclusion_case_close.id"))
+    social_case_number = Column(Integer)
+    attachment = relationship("Attachment", uselist=False, lazy="joined")
+    charge_method = relationship("ChargeMethod", uselist=False, lazy="joined")
+    approbation = relationship("Approbation", uselist=False, lazy="joined")
+    rejection = relationship("Rejection", uselist=False, lazy="joined")
+    close = relationship("Closing", uselist=False, lazy="joined")
 
 
 class Closing(Base, AuthorMixin, TimestampMixin):
