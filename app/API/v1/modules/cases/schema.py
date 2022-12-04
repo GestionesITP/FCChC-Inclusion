@@ -46,29 +46,7 @@ class InclusionCaseBase(BaseModel):
         allow_population_by_field_name = True
 
 
-class InclusionCaseItem(InclusionCaseBase):
-    number: int
-    status: str
-    employee_rut: str = Field(alias="employeeRut")
-    employee_names: str = Field(alias="employeeNames")
-    business_rut: str = Field(alias="businessRut")
-    business_name: str = Field(alias="businessName")
-    billing_business_name: str = Field(alias="billingBusinessName")
-    construction_name: str = Field(alias="constructionName")
-    boss_names: str = Field(alias="bossNames")
-    assistance_names: str = Field(alias="assistanceNames")
-    attachment_id: Optional[int] = Field(alias="attachmentId")
-    attachment: Optional[Attachment]
-    is_active: bool = Field(alias="isActive")
-    charge_method: ChargeMethodItem = Field(alias="chargeMethod")
-    approbation_id: Optional[int] = Field(alias="approbationId")
-    rejection_id: Optional[int] = Field(alias="rejectionId")
-    close_id: Optional[int] = Field(alias="closeId")
-    social_case_number: Optional[int] = Field(alias="socialCaseNumber")
 
-    class Config:
-        orm_mode = True
-        allow_population_by_field_name = True
 
 
 class InclusionCaseCreate(InclusionCaseBase):
