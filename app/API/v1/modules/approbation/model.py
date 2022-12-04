@@ -29,3 +29,4 @@ class ApprobationAttachment(Base, AuthorMixin, TimestampMixin):
     approbation = relationship(
         "Approbation", back_populates="attachments", lazy="joined")
     attachment = relationship("Attachment", uselist=False, lazy="joined")
+ 
