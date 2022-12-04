@@ -50,6 +50,6 @@ class Closing(Base, AuthorMixin, TimestampMixin):
     __tablename__ = "inclusion_case_close"
     id = Column(Integer, primary_key=True, unique=True, autoincrement=True)
     date = Column(DateTime(timezone=True), nullable=False)
-    comments = Column(String(800), nullable=False)
+    comments =Column(String(800), nullable=False)
     assistance_id = Column(Integer, nullable=False)
     assistance_names = Column(String(150), nullable=False)
