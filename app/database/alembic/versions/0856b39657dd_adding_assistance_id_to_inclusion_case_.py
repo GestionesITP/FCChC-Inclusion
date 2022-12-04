@@ -28,3 +28,4 @@ def downgrade():
     op.drop_column('inclusion_case', 'assistance_names')
     op.drop_column('inclusion_case', 'assistance_id')
     # ### end Alembic commands ###
+ 
