@@ -16,7 +16,10 @@ class JWTBearer(HTTPBearer):
         if credentials:
             if not credentials.scheme == "Bearer":
                 raise HTTPException(
-                    
+                    status_code=403, detail="Formato de token inválido")
+            user_id = self.verify_jwt(credentials.credentials)
+            request.user_id = user_id
+            request.token = credentials.credentials
 
         else:
             raise HTTPException(
