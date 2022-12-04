@@ -22,7 +22,8 @@ class ApprobationAttachment(Base, AuthorMixin, TimestampMixin):
     id = Column(Integer, primary_key=True, unique=True, autoincrement=True)
     date = Column(DateTime(timezone=True), nullable=False)
     attachment_name = Column(String(120))
-    attachment_id = Column(Integer,
+    attachment_id = Column(Integer, ForeignKey(
+        "attachment.id"), nullable=False)
     approbation_id = Column(Integer, ForeignKey(
         "approbation.id"), nullable=False)
     approbation = relationship(
