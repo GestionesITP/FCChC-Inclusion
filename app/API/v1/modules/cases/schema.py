@@ -98,7 +98,7 @@ class InclusionCaseCreate(InclusionCaseBase):
             }
         }
 
-
+ 
 class InclusionCaseUpdate(BaseModel):
     social_case_number: int = Field(alias="socialCaseNumber")
 
