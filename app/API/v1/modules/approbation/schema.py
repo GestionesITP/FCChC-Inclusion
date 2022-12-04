@@ -42,3 +42,4 @@ class ApprobationItem(ApprobationBase):
 
 class ApprobationDetails(ApprobationItem):
     analyst: UserResponse
+  
