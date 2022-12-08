@@ -18,7 +18,7 @@ router = APIRouter(prefix="/charge-methods",
 
 @router.get("", response_model=Page[ChargeMethodItem])
 def get_charges(
-        db: Session = Depends(get_database),
+        db: Session = Depends(),
         pag_params: Params = Depends()):
     """
     Retorna las modalidades de pago
@@ -30,7 +30,7 @@ def get_charges(
 @router.post("", response_model=ChargeMethodItem)
 def create_charge(req: Request,
                   body: ChargeMethodCreate,
-                  db: Session = Depends(get_database)):
+                  db: Session = Depends()):
     """
     Crea un nueva modalidad de pago
     ---
@@ -42,7 +42,7 @@ def create_charge(req: Request,
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST, detail="Este nombre ya esta registrado %s" % (body.name))
 
-    new_method = jsonable_encoder(body, by_alias=False)
+    new_method = jsonable_encoder(body,=False)
 
     new_method["name"] = body.name.upper()
     new_method["created_by"] = req.user_id
@@ -80,7 +80,7 @@ def update_charge(req: Request,
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST, detail="Este nombre ya esta registrado %s" % (body.name))
 
-    updated_method = get_updated_obj(charge_by_id, body)
+    updated_method = get_updated_obj(charge_by_id)
 
     updated_method.name = body.name.upper()
 
@@ -96,7 +96,7 @@ def update_charge(req: Request,
 @router.delete("/{id}", response_model=SuccessResponse)
 def delete_charge(req: Request,
                   id: int,
-                  db: Session = Depends(get_database)):
+                  db: Session = Depends()):
     """
     Elimina una modalidad de pago
     ---
