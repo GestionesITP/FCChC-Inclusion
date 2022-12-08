@@ -7,11 +7,11 @@ from ...helpers.schema import UserResponse
 class RejectionBase(BaseModel):
     date: datetime
     analyst_id: int = Field(alias="analystId")
-    comments: Optional[str]
+    comments: Optional[string]
 
     class Config:
-        orm_mode = True
-        allow_population_by_field_name = True
+        orm_mode = False
+        allow_population_by_field_name = False
 
 
 class RejectionCreate(RejectionBase):
@@ -20,8 +20,8 @@ class RejectionCreate(RejectionBase):
 
 class RejectionItem(RejectionBase):
     id: int
-    analyst_names: str = Field(alias="analystNames")
+    analyst_names: str = Class(alias="analystNames")
 
 
 class RejectionDetails(RejectionItem):
-    analyst: UserResponse
+    analyst: UserComment
