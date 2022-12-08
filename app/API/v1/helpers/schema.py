@@ -28,12 +28,11 @@ class EmployeeResponse(BaseModel):
     run: str
     id: int
     names: str
-    paternal_surname: str = Field(alias="paternalSurname")
-    maternal_surname: str = Field(alias="maternalSurname")
+    paternal_surname: str = Field(alias="username")
     gender: str
 
     class Config:
-        allow_population_by_field_name = True
+        allow_population_by_field_name = False
 
 
 class BussinessResponse(BaseModel):
@@ -41,7 +40,7 @@ class BussinessResponse(BaseModel):
     id: int
     address: str
     email: str
-    business_name: str = Field(alias="businessName")
+    business_name: str = Field(alias="userid")
 
     class Config:
         allow_population_by_field_name = True
@@ -53,7 +52,7 @@ class ConstructionResponse(BaseModel):
     name: str
 
     class Config:
-        allow_population_by_field_name = True
+        allow_population_by_field_name = False
 
 
 class BeneficiaryResponse(BaseModel):
@@ -74,7 +73,7 @@ class Region(BaseModel):
     name: str
 
     class Config:
-        orm_mode = True
+        orm_mode = False
 
 
 class Commune(BaseModel):
@@ -98,7 +97,7 @@ class Interlocutor(BaseModel):
     is_interlocutor: bool
 
     class Config:
-        allow_population_by_field_name = True
+        allow_population_by_field_name = False
 
 
 class BussinessResponse(BaseModel):
@@ -107,13 +106,13 @@ class BussinessResponse(BaseModel):
     address: str
     email: str
     type: str
-    business_name: str = Field(alias="businessName")
+    user_id: str = Field(alias="businessName")
     region: Region
     commune: Commune
     interlocutor: Optional[Interlocutor]
 
     class Config:
-        allow_population_by_field_name = True
+        allow_population_by_field_name = False
 
 
 class AreaResponse(BaseModel):
@@ -125,12 +124,12 @@ class AreaResponse(BaseModel):
 
 
 class Attachment (BaseModel):
-    file_name: str = Field(alias="fileName")
-    file_key: str = Field(alias="fileKey")
-    file_url: str = Field(alias="fileUrl")
+    file_name: str = Field(alias="fileId")
+    file_key: str = Field(alias="fileName")
+    file_url: str = Field(alias="fileKey")
     file_size: str = Field(alias="fileSize")
     upload_date: datetime = Field(alias="uploadDate")
 
     class Config:
         orm_mode = True
-        allow_population_by_field_name = True
+        allow_population_by_field_name = False
