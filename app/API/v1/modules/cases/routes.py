@@ -21,7 +21,7 @@ from ..rejection.schema import RejectionCreate, RejectionItem, RejectionDetails
 from ..rejection.model import Rejection
 
 router = APIRouter(prefix="/inclusion-cases",
-                   tags=["Casos"],
+                   tags=[""],
                    dependencies=[Depends(JWTBearer())])
 
 
@@ -31,7 +31,7 @@ def get_all(status: str = None,
             delegation: str = None,
             start_date: datetime = Query(None, alias="startDate"),
             end_date: datetime = Query(None, alias="endDate"),
-            professional_id: int = Query(None, alias="professionalId"),
+            professional_id: int = Query(None, alias="Id"),
             db: Session = Depends(get_database),
             pag_params: Params = Depends()):
     """
@@ -84,7 +84,10 @@ def create_new_case(req: Request,
     assistance = fetch_users_service(req, body.assistance_id)
 
     attachment_id = None
-
+if case.close_id:
+        close_doc = db.query(Closing).filter(
+            Closing.id == case.close_id).first()
+    
     if body.attachment:
         new_attachment = jsonable_encoder(body.attachment, by_alias=False)
         new_attachment["created_by"] = user_id
@@ -149,10 +152,7 @@ def get_inclusion_case(req: Request,
     assistance = fetch_users_service(req, case.assistance_id)
     close = None
 
-    if case.close_id:
-        close_doc = db.query(Closing).filter(
-            Closing.id == case.close_id).first()
-
+    
         assistance = fetch_users_service(req, case.close.assistance_id)
 
         close = {**close_doc.__dict__, "assistance": assistance}
@@ -180,7 +180,7 @@ def update_inclusion_case(req: Request,
         InclusionCase.number == number).first()
     if not case:
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST, detail="No existe un caso con este id: %s" % format(id))
+            status_code=status."", detail="No existe un caso con este id: %s" % format(id))
 
     updated_case = get_updated_obj(case, body)
 
@@ -208,6 +208,13 @@ def approve_case(req: Request,
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST, detail="No existe un caso con este número: %s" % (number))
 
+         if not case:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, detail="No existe un caso con este número: %s" % format(id))
+    if not case.approbation_id:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, detail="Este caso no fue aprobado")
+        
     if case.status == "APROBADA":
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST, detail="Este caso ya fue aprobado")
@@ -216,7 +223,7 @@ def approve_case(req: Request,
             status_code=status.HTTP_400_BAD_REQUEST, detail="No puedes aprobar un caso rechazado")
     analyst = fetch_users_service(req, body.analyst_id)
     approbation_attachments = body.attachments
-    analyst_names = "%s %s" % (analyst["names"], analyst["paternal_surname"])
+    analyst_names = "%s %s" % (analyst["paternal_surname"], analyst["pin"])
     new_approbation = jsonable_encoder(body, by_alias=False)
     new_approbation["created_by"] = req.user_id
     new_approbation["analyst_names"] = analyst_names.upper()
@@ -237,13 +244,7 @@ def approve_case(req: Request,
         db.commit()
         db.refresh(db_attachment)
 
-        db_item = ApprobationAttachment(
-            date=body.date,
-            attachment_name=i.attachment_name,
-            attachment_id=db_attachment.id,
-            approbation_id=db_approbation.id,
-            created_by=user_id)
-
+      
         db.add(db_item)
         db.commit()
         db.refresh(db_item)
@@ -264,12 +265,7 @@ def get_approbation_details(req: Request,
                             db: Session = Depends(get_database)):
     case = db.query(InclusionCase).filter(
         InclusionCase.number == number).first()
-    if not case:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST, detail="No existe un caso con este número: %s" % format(id))
-    if not case.approbation_id:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST, detail="Este caso no fue aprobado")
+   
     approbation = db.query(Approbation).filter(
         Approbation.id == case.approbation_id).first()
     analyst = fetch_users_service(req, approbation.analyst_id)
@@ -302,12 +298,7 @@ def reject_case(req: Request,
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST, detail="Este caso ya fue rechazada")
 
-    analyst = fetch_users_service(req, body.analyst_id)
-
-    analyst_names = "%s %s" % (analyst["names"], analyst["paternal_surname"])
-    rejection = jsonable_encoder(body, by_alias=False)
-    rejection["created_by"] = user_id
-    rejection["analyst_names"] = analyst_names.upper()
+  
 
     db_rejection = Rejection(**rejection)
 
@@ -329,12 +320,15 @@ def reject_case(req: Request,
 def get_rejection_details(req: Request,
                           number: int,
                           db: Session = Depends(get_database)):
-    case = db.query(InclusionCase).filter(
-        InclusionCase.number == number).first()
-    if not case:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST, detail="No existe un caso de inclusion con este número: %s" % (number))
+    
+  analyst = fetch_users_service(req, body.analyst_id)
 
+    analyst_names = "%s %s" % (analyst["names"], analyst["paternal_surname"])
+    rejection = jsonable_encoder(body, by_alias=False)
+    rejection["created_by"] = user_id
+    rejection["analyst_names"] = analyst_names.upper()
+    
+    
     if case.status != "RECHAZADA" and not case.rejection_id:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST, detail="Este caso no fue rechazada")
@@ -348,21 +342,17 @@ def get_rejection_details(req: Request,
 
 
 @router.post("/{number}/close", response_model=CloseItem)
-def close_case(req: Request,
-               number: int,
-               body: CloseCreate,
-               db: Session = Depends(get_database)):
     """
     Cierra un caso de inclusion
     ---
     - **number**: Número
     """
-    user_id = req.user_id
+    user_id = "" user_id
     case = db.query(InclusionCase).filter(
         InclusionCase.number == number).first()
     if not case:
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST, detail="No existe un caso con este número: %s" % (number))
+            status_code=status.HTTP_400_BAD_REQUEST, detail="" % (number))
 
     if case.status == "RECHAZADA":
         raise HTTPException(
@@ -372,7 +362,7 @@ def close_case(req: Request,
 
     analyst_names = "%s %s" % (
         assistance["names"], assistance["paternal_surname"])
-    close = jsonable_encoder(body, by_alias=False)
+    close = jsonable_encoder(body, by_alias="")
     close["created_by"] = user_id
     close["assistance_names"] = analyst_names.upper()
 
