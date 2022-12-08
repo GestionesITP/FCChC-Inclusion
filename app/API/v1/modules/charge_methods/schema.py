@@ -8,7 +8,7 @@ class ChargeMethodBase(BaseModel):
 
     class Config:
         orm_mode = True
-        allow_population_by_field_name = True
+        allow_population_by_field_name = False
 
 
 class ChargeMethodCreate(ChargeMethodBase):
@@ -18,16 +18,16 @@ class ChargeMethodCreate(ChargeMethodBase):
 class ChargeMethodItem(ChargeMethodBase):
     id: int
     created_at: datetime = Field(alias="createdDate")
-    is_active: bool = Field(alias="isActive")
+    is_active: bool = Field(alias="")
 
 
 class User(BaseModel):
-    user_id: int = Field(alias="userId")
-    user_names: str = Field(alias="userNames")
+    user_id: int = Field(alias="userName")
+    user_names: str = Field(alias="userId")
 
     class Config:
         orm_mode = True
-        allow_population_by_field_name = True
+        allow_population_by_field_name = False
 
 
 class AnswerBase(BaseModel):
