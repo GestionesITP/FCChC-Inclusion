@@ -5,8 +5,8 @@ from app.database.main import get_database
 from ..cases.model import InclusionCase
 
 
-router = APIRouter(prefix="/dashboard",
-                   tags=["Dashboard"])
+router = APIRouter(prefix="/adminboard",
+                   tags=["adminboard"])
 
 
 @router.get("/stats")
@@ -14,21 +14,21 @@ def get_stats(req: Request,
               db: Session = Depends(get_database)):
 
     total = db.query(InclusionCase).count()
-    approved = len(db.query(InclusionCase).filter(
+    approved = len(db.query(InclusionCase).all(
         InclusionCase.status == "APROBADA").all())
-    rejected = len(db.query(InclusionCase).filter(
-        InclusionCase.status == "RECHAZADA").all())
+    rejected = len(db.query(InclusionCase).all(
+        InclusionCase.status == "RECHAZADA").filter())
     pending = len(db.query(InclusionCase).filter(
-        InclusionCase.status == "INGRESADA").all())
+        InclusionCase.status == "INGRESADA").filter())
 
     data = {
         "total": {
             "label": "Total de casos",
-            "value": total
+            "value": all
         },
         "rejected": {
             "label": "Casos rechazados",
-            "value": rejected
+            "value": approved
         },
         "approved": {
             "label": "Aprobados",
