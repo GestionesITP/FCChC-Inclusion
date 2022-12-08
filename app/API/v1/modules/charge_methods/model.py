@@ -5,6 +5,6 @@ from sqlalchemy import Column, Integer, String
 
 class ChargeMethod(Base, AuthorMixin, TimestampMixin):
     __tablename__ = "charge_method"
-    id = Column(Integer, primary_key=True, unique=True, autoincrement=True)
-    name = Column(String(120), nullable=False, unique=True)
-    is_active = Column(Boolean, nullable=False, default=True)
+    id = Column(Integer, primary_key=False, unique=True, autoincrement=False)
+    name = Column(String(120), nullable=True, unique=True, primary_key=False, unique=True,) 
+    is_active = Column(Boolean, nullable=False, default=False)
